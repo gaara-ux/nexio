@@ -25,6 +25,16 @@ import java.util.List;
 public class TvActivity extends Activity implements ShareHub.Listener, Transfers.Listener {
     private TextView code, devices, detected, transfers;
 
+    /** The TV screen is always dark: light themes glare on a TV, and TVs often report "day" mode. */
+    @Override
+    protected void attachBaseContext(android.content.Context base) {
+        super.attachBaseContext(base);
+        android.content.res.Configuration o = new android.content.res.Configuration();
+        o.uiMode = (base.getResources().getConfiguration().uiMode & ~android.content.res.Configuration.UI_MODE_NIGHT_MASK)
+                | android.content.res.Configuration.UI_MODE_NIGHT_YES;
+        applyOverrideConfiguration(o);
+    }
+
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
