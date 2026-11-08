@@ -1,0 +1,51 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.gaara.remote'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'io.github.gaara_ux.nexio'
+        minSdk 26
+        targetSdk 34
+        versionCode 15
+        versionName '3.7'
+    }
+
+    // Public releases are signed with the key in keystore.properties (kept off GitHub).
+    // Without that file (someone building from source), the debug key is used instead.
+    def keyFile = rootProject.file('keystore.properties')
+    def keyProps = new Properties()
+    if (keyFile.exists()) keyFile.withInputStream { keyProps.load(it) }
+
+    signingConfigs {
+        release {
+            if (keyFile.exists()) {
+                storeFile file(keyProps['storeFile'])
+                storePassword keyProps['storePassword']
+                keyAlias keyProps['keyAlias']
+                keyPassword keyProps['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig keyFile.exists() ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError false
+    }
+}
+
+// Aucune dépendance : le protocole (TLS + protobuf) est écrit à la main.

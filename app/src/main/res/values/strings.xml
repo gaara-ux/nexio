@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Nexio</string>
+    <string name="my_tvs">Mes TV</string>
+    <string name="found_tvs">TV trouvées sur le Wi-Fi</string>
+    <string name="searching">Recherche en cours…\nLa TV doit être allumée et sur le même Wi-Fi.</string>
+    <string name="add_by_ip">Ajouter par adresse IP</string>
+    <string name="no_paired">Aucune TV appairée pour l\'instant.\nTouche une TV trouvée ci-dessous pour l\'appairer.</string>
+    <string name="back">Retour</string>
+    <string name="home">Accueil</string>
+    <string name="menu">Menu</string>
+    <string name="rewind">Reculer</string>
+    <string name="play_pause">Lecture / pause</string>
+    <string name="forward">Avancer</string>
+    <string name="vol_down">Volume moins</string>
+    <string name="vol_up">Volume plus</string>
+    <string name="mute">Couper le son</string>
+    <string name="power">Marche / arrêt</string>
+    <string name="devices">Changer de TV</string>
+    <string name="keyboard">Clavier</string>
+    <string name="dictate">Dicter</string>
+    <string name="voice">Parler à la TV</string>
+    <string name="voice_listening">🎤 Parle à la TV…</string>
+    <string name="send">Valider sur la TV</string>
+    <string name="text_title">Écrire sur la TV</string>
+    <string name="text_hint">Ouvre un champ de texte sur la TV (une recherche par exemple). Ce que tu écris ou dictes ici s\'affiche directement dedans.</string>
+    <string name="text_input_hint">Écrire ou dicter…</string>
+    <string name="text_close">Revenir à la télécommande</string>
+    <string name="listening">🎤 Je t\'écoute… parle maintenant.</string>
+</resources>

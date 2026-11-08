@@ -1,0 +1,11 @@
+# Built files and machine-specific settings: never on GitHub
+.gradle/
+build/
+app/build/
+local.properties
+*.apk
+*.aab
+# Signing keys stay on your PC (keep a backup!)
+*.jks
+*.keystore
+keystore.properties
