@@ -22,7 +22,8 @@ Sans pub, sans compte, sans serveur : tout passe directement par ton Wi-Fi.
   une appli pour l'ajouter aux favoris, en raccourcis au-dessus de la télécommande.
 - **Minuterie de veille** (bouton ⋮) : la TV se met en veille après 15 min à 2 h, même si l'appli est fermée.
 - **Fichiers** : deux panneaux pour copier ou déplacer des fichiers entre le téléphone, la TV et le PC.
-- **Applis** : récupère l'APK d'une appli (téléphone ou TV), envoie-la vers un autre appareil, installe-la.
+- **Applis** : récupère l'APK d'une appli (téléphone ou TV), envoie-la vers un autre appareil, installe-la, ou
+  désinstalle-la, même sur la TV depuis le téléphone (Android demande toujours de confirmer sur l'appareil).
 - **Réglages** pour que chacun l'ait à son goût : thème sombre, clair ou comme le téléphone, taille des boutons,
   boutons affichés, vibration, rotation, écran allumé.
 - **S'adapte à tous les écrans** : petits téléphones, grands téléphones, tablettes et pliables, en portrait ou

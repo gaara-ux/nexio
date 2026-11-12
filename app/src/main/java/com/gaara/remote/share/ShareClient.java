@@ -287,6 +287,11 @@ public final class ShareClient {
         post(ctx, peer, "/api/install?path=" + enc(path));
     }
 
+    /** Uninstalls an app of the paired device (its screen asks to confirm). Blocking. */
+    public static void uninstall(Context ctx, Share.Peer peer, String pkg) throws IOException {
+        post(ctx, peer, "/api/uninstall?pkg=" + enc(pkg));
+    }
+
     /** Copies one file of a paired device into a local file. Blocking. */
     public static void download(Context ctx, Share.Peer peer, String path, File dest) throws IOException {
         HttpURLConnection c = open(ShareHub.get(ctx).hostOf(peer), peer.port, "/api/file?path=" + enc(path), peer.token, "GET");

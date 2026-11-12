@@ -137,11 +137,21 @@ final class AppsTab extends LinearLayout implements ShareHub.Listener {
 
     void attach() {
         ShareHub.get(act).addListener(this);
+        android.content.IntentFilter f = new android.content.IntentFilter(android.content.Intent.ACTION_PACKAGE_REMOVED);
+        f.addDataScheme("package");
+        try {
+            act.registerReceiver(removed, f);
+        } catch (Exception ignored) {
+        }
         if (all.isEmpty() && !loading) load();
     }
 
     void detach() {
         ShareHub.get(act).removeListener(this);
+        try {
+            act.unregisterReceiver(removed);
+        } catch (Exception ignored) {
+        }
     }
 
     /** Back leaves the selection first. */
@@ -250,15 +260,85 @@ final class AppsTab extends LinearLayout implements ShareHub.Listener {
                 + (a.system ? "\nAppli système" : "")
                 + "\n\nSur " + where + ", enregistrée sous :\n" + ApkStore.FOLDER + "/" + a.fileName()
                 + (a.parts > 1 ? "\n\nUn .apks s'installe avec SAI, ou « adb install-multiple » après l'avoir dézippé." : "");
-        new AlertDialog.Builder(act)
+        AlertDialog.Builder b = new AlertDialog.Builder(act)
                 .setTitle(a.label)
                 .setIcon(iconCache.get(a.pkg))
                 .setMessage(msg)
                 .setPositiveButton("Extraire", (d, w) -> extract(java.util.Collections.singletonList(a)))
-                .setNeutralButton("Choisir plusieurs", (d, w) -> toggle(a))
-                .setNegativeButton("Fermer", null)
+                .setNeutralButton("Choisir plusieurs", (d, w) -> toggle(a));
+        if (a.system) b.setNegativeButton("Fermer", null);
+        else b.setNegativeButton("Désinstaller", (d, w) -> uninstall(java.util.Collections.singletonList(a)));
+        b.show();
+    }
+
+    // ---- Uninstalling ----
+
+    /** Asks the device (this phone or a paired one) to uninstall these apps; Android confirms each one. */
+    private void uninstall(List<ApkStore.App> apps) {
+        List<ApkStore.App> ok = new ArrayList<>();
+        int system = 0;
+        for (ApkStore.App a : apps) {
+            if (a.system) system++;
+            else ok.add(a);
+        }
+        if (ok.isEmpty()) {
+            toast("Les applis système ne peuvent pas être désinstallées.");
+            return;
+        }
+        String where = device == null ? "ce téléphone" : device.name;
+        String names = ok.size() == 1 ? ok.get(0).label : ok.size() + " applis";
+        String msg = "Android va demander de confirmer " + (ok.size() == 1 ? "" : "chacune ")
+                + (device == null ? "sur ce téléphone." : "sur l'écran de " + device.name + ".")
+                + (system > 0 ? "\n\n" + system + " appli" + (system > 1 ? "s" : "") + " système ignorée"
+                + (system > 1 ? "s" : "") + " : Android ne permet pas de les désinstaller." : "");
+        new AlertDialog.Builder(act)
+                .setTitle("Désinstaller " + names + " de " + where + " ?")
+                .setMessage(msg)
+                .setNegativeButton("Annuler", null)
+                .setPositiveButton("Désinstaller", (d, w) -> {
+                    clearSelection();
+                    Share.Peer to = device;
+                    new Thread(() -> {
+                        String error = null;
+                        for (ApkStore.App a : ok) {
+                            try {
+                                if (to == null) com.gaara.remote.share.Uninstaller.uninstall(act, a.pkg);
+                                else ShareClient.uninstall(act, to, a.pkg);
+                            } catch (Exception e) {
+                                String m = ShareClient.message(e);
+                                if (m.contains("inconnu")) {
+                                    m = to.name + " a une ancienne version de Nexio : installe-lui la dernière pour pouvoir désinstaller à distance.";
+                                }
+                                error = a.label + " : " + m;
+                                break;
+                            }
+                        }
+                        String err = error;
+                        main.post(() -> {
+                            if (err != null) toast(err);
+                            else if (to != null) toast("Confirme sur " + to.name + ", puis touche « Actualiser ».");
+                        });
+                    }, "uninstall").start();
+                })
                 .show();
     }
+
+    /** This phone's list refreshes by itself when an app goes away. */
+    private final android.content.BroadcastReceiver removed = new android.content.BroadcastReceiver() {
+        @Override
+        public void onReceive(android.content.Context c, android.content.Intent i) {
+            if (device != null || i.getBooleanExtra(android.content.Intent.EXTRA_REPLACING, false)) return;
+            String pkg = i.getData() == null ? null : i.getData().getSchemeSpecificPart();
+            boolean changed = false;
+            for (int k = all.size() - 1; k >= 0; k--) {
+                if (all.get(k).pkg.equals(pkg)) { all.remove(k); changed = true; }
+            }
+            if (changed) {
+                selected.remove(pkg);
+                filter();
+            }
+        }
+    };
 
     private void toggle(ApkStore.App a) {
         if (!selected.remove(a.pkg)) selected.add(a.pkg);
@@ -302,7 +382,7 @@ final class AppsTab extends LinearLayout implements ShareHub.Listener {
         int n = selected.size();
         if (n == 0) {
             if (!all.isEmpty()) actions.addView(label(shown.size() + " appli" + (shown.size() > 1 ? "s" : "")
-                    + "  ·  touche pour extraire, garde le doigt pour en choisir plusieurs"));
+                    + "  ·  touche pour extraire ou désinstaller, garde le doigt pour en choisir plusieurs"));
             if (!loading) actions.addView(button("Actualiser", R.color.text, v -> load()));
             return;
         }
@@ -310,6 +390,7 @@ final class AppsTab extends LinearLayout implements ShareHub.Listener {
         for (ApkStore.App a : picked()) size += a.size;
         actions.addView(label(n + " choisie" + (n > 1 ? "s" : "") + "  ·  " + Ui.size(size)));
         actions.addView(button("Extraire", R.color.accent, v -> extract(picked())));
+        actions.addView(button("Désinstaller", R.color.text, v -> uninstall(picked())));
         actions.addView(button("Tout", R.color.text, v -> selectAllShown()));
         actions.addView(button("✕", R.color.muted, v -> clearSelection()));
     }

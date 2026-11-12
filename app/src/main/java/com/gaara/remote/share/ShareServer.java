@@ -37,6 +37,7 @@ import java.util.Map;
  *   GET  /api/apk?pkg=                 the app's .apk, or .apks when it is in several pieces
  *   GET  /api/icon?pkg=                its icon, PNG
  *   POST /api/install?path=            install that file here (.apk/.apks/.apkm/.xapk; the screen asks to confirm)
+ *   POST /api/uninstall?pkg=           uninstall that app here (the screen asks to confirm)
  * Every call but info/pair needs "X-Token" of a paired device.
  */
 final class ShareServer {
@@ -266,6 +267,11 @@ final class ShareServer {
             }
             case "POST /api/install": { // opens this device's install screen for one of its files
                 Installer.install(ctx, Share.resolve(p.get("path")));
+                send(out, 200, new JSONObject().put("ok", true));
+                return;
+            }
+            case "POST /api/uninstall": { // opens this device's uninstall screen for one of its apps
+                Uninstaller.uninstall(ctx, p.get("pkg"));
                 send(out, 200, new JSONObject().put("ok", true));
                 return;
             }

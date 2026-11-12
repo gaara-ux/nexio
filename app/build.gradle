@@ -10,8 +10,8 @@ android {
         applicationId 'io.github.gaara_ux.nexio'
         minSdk 26
         targetSdk 34
-        versionCode 17
-        versionName '3.8'
+        versionCode 18
+        versionName '3.9'
     }
 
     // Two APKs from the same code and the same application id (each updates the other's install):

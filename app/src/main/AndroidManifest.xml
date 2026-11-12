@@ -23,6 +23,8 @@
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- Applis tab: uninstall an app (Android always shows its own confirmation). -->
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
     <!-- On the TV: lets the install confirmation open while the app is in the background
          (granted once with "appops set io.github.gaara_ux.nexio SYSTEM_ALERT_WINDOW allow"). -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -93,6 +95,9 @@
         <!-- Answers of Android's package installer (confirm, installed, failed). -->
         <receiver
             android:name=".share.Installer$Status"
+            android:exported="false" />
+        <receiver
+            android:name=".share.Uninstaller$Status"
             android:exported="false" />
 
         <activity
