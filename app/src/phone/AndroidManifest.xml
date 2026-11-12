@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Phone build (Nexio.apk). Removes what only the TV build needs:
+    - SYSTEM_ALERT_WINDOW: on the TV, lets the install confirmation open while Nexio is in the
+      background. On a phone Nexio is in front when you install, so it is never needed.
+    - Starting the sharing service when the device boots or Nexio is updated: TV only
+      (ShareService.Boot already does nothing on a phone).
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" tools:node="remove" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" tools:node="remove" />
+
+    <application>
+        <receiver android:name="com.gaara.remote.share.ShareService$Boot" tools:node="remove" />
+    </application>
+</manifest>

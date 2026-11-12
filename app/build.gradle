@@ -10,8 +10,17 @@ android {
         applicationId 'io.github.gaara_ux.nexio'
         minSdk 26
         targetSdk 34
-        versionCode 16
-        versionName '3.7.1'
+        versionCode 17
+        versionName '3.8'
+    }
+
+    // Two APKs from the same code and the same application id (each updates the other's install):
+    // "phone" (Nexio.apk) drops the two permissions only the TV needs, so antivirus apps on phones
+    // see fewer sensitive requests; "tv" (Nexio-TV.apk) keeps them.
+    flavorDimensions 'device'
+    productFlavors {
+        phone { dimension 'device' }
+        tv { dimension 'device' }
     }
 
     // Public releases are signed with the key in keystore.properties (kept off GitHub).

@@ -37,8 +37,12 @@ Tout se trouve dans la page **[Releases](../../releases/latest)** :
 | Appareil | Fichier | Comment |
 |---|---|---|
 | Téléphone Android (8.0 ou plus récent) | `Nexio.apk` | Ouvre le fichier sur le téléphone. Android demande d'autoriser l'installation depuis ton navigateur : accepte. |
-| TV (pour les fichiers, les applis et les icônes du lanceur) | le même `.apk` | Avec l'appli **Downloader** sur la TV, tape : `github.com/gaara-ux/nexio/releases/latest/download/Nexio.apk`. Ou avec ADB : `adb install Nexio.apk`. |
+| TV (pour les fichiers, les applis et les icônes du lanceur) | `Nexio-TV.apk` | Avec l'appli **Downloader** sur la TV, tape : `github.com/gaara-ux/nexio/releases/latest/download/Nexio-TV.apk`. Ou avec ADB : `adb install Nexio-TV.apk`. |
 | PC Windows 10 / 11 | `Nexio.exe` | Voir [Nexio pour Windows](https://github.com/gaara-ux/nexio-windows). |
+
+Les deux APK sont la même appli, compilée à partir du même code. La version TV garde seulement deux permissions de
+plus, inutiles sur un téléphone (voir *Mes données ?* plus bas). Ta TV a déjà `Nexio.apk` d'une version précédente ?
+Installe `Nexio-TV.apk` par-dessus : tes appareils jumelés restent.
 
 La télécommande toute seule n'a **rien à installer sur la TV** : elle parle le même protocole que l'appli
 Google TV. Nexio sur la TV n'est utile que pour les fichiers, les applis et les icônes du lanceur.
@@ -61,6 +65,17 @@ Google TV. Nexio sur la TV n'est utile que pour les fichiers, les applis et les 
 **Mes données ?** Rien ne quitte ton réseau. L'appli n'a ni pub, ni statistiques, ni compte.
 Elle a besoin de : réseau local (parler à la TV), micro (dictée, seulement quand tu touches le micro),
 accès aux fichiers (onglet Fichiers), liste des applis et installation (onglet Applis), alarmes (minuterie).
+La version TV demande en plus : démarrer avec la TV (pour que le partage de fichiers soit toujours prêt) et
+s'afficher par-dessus les autres applis (pour que l'écran « Installer cette appli ? » puisse s'ouvrir quand on
+envoie un APK à la TV depuis le téléphone ou le PC).
+
+**Mon antivirus (Norton, etc.) dit que Nexio est dangereux.** C'est une fausse alerte. Les antivirus pour
+téléphone jugent surtout la liste des permissions et la popularité d'une appli. Nexio gère des fichiers,
+installe des APK et liste les applis, comme un gestionnaire de fichiers, et elle est installée en dehors du
+Play Store par peu de monde : ça suffit à déclencher une alerte « suspecte ». Le code est entièrement ici, sans
+aucune bibliothèque externe, et tu peux le lire ou le compiler toi-même. Vérifie surtout que ton fichier vient
+bien de la page [Releases](../../releases/latest) : chaque version y donne l'empreinte SHA-256 de ses
+fichiers. Si l'empreinte ne correspond pas, ne l'installe pas et ouvre une [Issue](../../issues).
 
 ## Compiler soi-même
 
@@ -70,13 +85,22 @@ JDK 17 et le SDK Android 34, puis :
 gradlew assembleRelease
 ```
 
-Sans fichier `keystore.properties`, l'APK est signé avec ta clé de débogage. Aucune dépendance externe :
+Ça donne deux APK : `app/build/outputs/apk/phone/release/` (téléphone) et `app/build/outputs/apk/tv/release/`
+(TV). Sans fichier `keystore.properties`, ils sont signés avec ta clé de débogage. Aucune dépendance externe :
 le protocole de la télécommande (TLS + protobuf) est écrit à la main.
 
 ## Signaler un problème
 
 Ouvre une **[Issue](../../issues)** : dis quel téléphone, quelle TV, et ce qui s'est passé. Les idées sont les
 bienvenues aussi.
+
+## Merci
+
+- **[scrcpy](https://github.com/Genymobile/scrcpy)**, de Genymobile : c'est lui qui affiche et contrôle l'écran
+  du téléphone ou de la TV dans [Nexio pour Windows](https://github.com/gaara-ux/nexio-windows). Un outil
+  formidable, libre (licence Apache 2.0), que j'utilise moi-même. Nexio ne le modifie pas et ne l'inclut pas :
+  il télécharge la version officielle depuis leur page GitHub au premier usage. Si l'écran à distance te rend
+  service, va leur mettre une étoile.
 
 ## Licence
 
